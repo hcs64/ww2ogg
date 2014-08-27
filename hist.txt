@@ -1,0 +1,61 @@
+2009-12-04 - 0.0 - first release
+
+2009-12-04 - 0.1 - fix buffer overflow (floor_dimension_list needs maximum_class + 1 elements)
+                 - add support for LIST and smpl (looping)
+                 - give more info in vendor comment
+
+2009-12-04 - 0.2 - add support for subtype without seek table
+                 - handier Makefiles
+                 - corrected setup packet size check
+
+2009-12-04 - 0.3 - ignore cue and LIST
+                 - allow subtype 0x33
+
+2010-01-10 - 0.4 - allow RIFF smaller than file
+
+2010-01-11 - 0.5 - allow subtype 0x3f (6 channel)
+                 - support for inline codebooks with command line switch
+
+2010-01-16 - 0.6 - support for nearly-full (only missing time domain) setup
+                   with command line switch --full-setup
+                 - all parse errors now have descriptive text
+
+2010-01-16 - 0.7 - support for vorb chunk size 0x28, which comes with
+                   a nearly-complete header triad and 8 byte packet headers
+                 - don't attempt to load packed codebooks if not needed
+                 - print a bit more information
+
+2010-01-17 - 0.8 - if the input file originally ended with .ogg, append
+                   _conv.ogg for default output name to avoid overwriting input
+
+2010-10-24 - 0.9 - tolerate fmt chunk without extra "signature"
+
+2010-12-22 - 0.10 - allow subtype 0x3b (5 channel)
+
+2011-06-04 - 0.11 - support for vorb chunk size 0x2a, which comes with:
+                  * no granulepos
+                  * packets missing packet type and window flags
+
+2011-07-09 - 0.12 - support for vorb chunk size 0x32, same as 0x34
+
+2011-07-24 - 0.13 - support 0x2a vorb chunk merged with fmt chunk at 0x18
+
+2011-10-27 - 0.15 - try to detect 0x2a vorb chunk but normal packets (0x70 at
+                    offset 4 in vorb)
+                  - truncated file reporting
+
+2011-10-29 - 0.16 - fix packet header truncation reporting
+
+2011-11-15 - 0.17 - more 0x2a normal packet detection, still not certain which
+                    bit indicates this
+                  - don't worry about subtypes anymore, they just indicate
+                    channel layout
+
+2011-12-03 - 0.18 - new packed codebooks, Wwise 2011.2 uses aoTuV 6.03.
+                  - allow user-specified packed_codebooks.bin filenames
+
+2011-12-03 - 0.19 - properly set previous/next windows for shortened packets
+
+2013-10-01 - 0.20 - more 0x2a normal packet detection
+
+2013-12-10 - 0.21 - support 0x2c vorb chunk, same as 0x28

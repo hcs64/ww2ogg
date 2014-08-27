@@ -1,0 +1,21 @@
+PROJECT_NAME=ww2ogg
+EXE_NAME=$(PROJECT_NAME)$(EXE_EXT)
+
+all: $(EXE_NAME)
+
+OBJECTS=ww2ogg.o wwriff.o codebook.o crc.o
+
+$(EXE_NAME): $(OBJECTS)
+	$(CXX) $(CXXFLAGS) $^ -o $@
+	$(STRIP) $@
+
+ww2ogg.o: ww2ogg.cpp wwriff.h Bit_stream.h crc.h errors.h
+
+wwriff.o: wwriff.cpp wwriff.h codebook.h Bit_stream.h crc.h errors.h
+
+codebook.o: codebook.cpp codebook.h Bit_stream.h crc.h errors.h
+
+crc.o: crc.c crc.h
+
+clean:
+	rm -f $(EXE_NAME) $(OBJECTS)
