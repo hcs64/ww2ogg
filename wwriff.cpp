@@ -205,10 +205,6 @@ Wwise_RIFF_Vorbis::Wwise_RIFF_Vorbis(const string& name, const string& codebooks
             _data_offset = chunk_offset + 8;
             _data_size = chunk_size;
         }
-        else
-        {
-            throw Parse_error_str("unknown chunk type");
-        }
 
         chunk_offset = chunk_offset + 8 + chunk_size;
     }
