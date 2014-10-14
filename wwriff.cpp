@@ -953,7 +953,7 @@ void Wwise_RIFF_Vorbis::generate_ogg_header(Bit_oggstream& os, bool * & mode_blo
 
         if ((ss.get_total_bits_read()+7)/8 != setup_packet.size()) throw Parse_error_str("didn't read exactly setup packet");
 
-        if (setup_packet.next_offset() != _data_offset + _first_audio_packet_offset) throw Parse_error_str("first audio packet doesn't follow setup packet");
+        if (setup_packet.next_offset() != _data_offset + static_cast<long>(_first_audio_packet_offset)) throw Parse_error_str("first audio packet doesn't follow setup packet");
 
     }
 }
@@ -1250,7 +1250,7 @@ void Wwise_RIFF_Vorbis::generate_ogg_header_with_triad(Bit_oggstream& os)
             offset = setup_packet.next_offset();
         }
 
-        if (offset != _data_offset + _first_audio_packet_offset) throw Parse_error_str("first audio packet doesn't follow setup packet");
+        if (offset != _data_offset + static_cast<long>(_first_audio_packet_offset)) throw Parse_error_str("first audio packet doesn't follow setup packet");
 
     }
 

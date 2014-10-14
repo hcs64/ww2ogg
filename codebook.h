@@ -28,8 +28,8 @@ unsigned int _book_maptype1_quantvals(unsigned int entries, unsigned int dimensi
   int vals=entries>>((bits-1)*(dimensions-1)/dimensions);
 
   while(1){
-    long acc=1;
-    long acc1=1;
+    unsigned long acc=1;
+    unsigned long acc1=1;
     unsigned int i;
     for(i=0;i<dimensions;i++){
       acc*=vals;
