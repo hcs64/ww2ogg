@@ -16,6 +16,3 @@ wwriff.o: wwriff.cpp wwriff.h codebook.h Bit_stream.h crc.h errors.h
 codebook.o: codebook.cpp codebook.h Bit_stream.h crc.h errors.h
 
 crc.o: crc.c crc.h
-
-clean:
-	rm -f $(EXE_NAME) $(OBJECTS)

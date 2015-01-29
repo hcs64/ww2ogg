@@ -4,3 +4,7 @@ STRIP=strip
 EXE_EXT=
 
 include Makefile.common
+
+clean:
+	rm -f $(EXE_NAME) $(OBJECTS)
+    

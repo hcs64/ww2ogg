@@ -205,6 +205,16 @@ Wwise_RIFF_Vorbis::Wwise_RIFF_Vorbis(const string& name, const string& codebooks
             _data_offset = chunk_offset + 8;
             _data_size = chunk_size;
         }
+        else if (!memcmp(chunk_type,"JUNK",4))
+        {
+            _junk_offset = chunk_offset + 8;
+            _junk_size = chunk_size;
+        }
+        else if (!memcmp(chunk_type,"akd ",4))
+        {
+            _akd_offset = chunk_offset + 8;
+            _akd_size = chunk_size;
+        }
 
         chunk_offset = chunk_offset + 8 + chunk_size;
     }

@@ -25,8 +25,8 @@ class Wwise_RIFF_Vorbis
     bool _little_endian;
 
     long _riff_size;
-    long _fmt_offset, _cue_offset, _LIST_offset, _smpl_offset, _vorb_offset, _data_offset;
-    long _fmt_size, _cue_size, _LIST_size, _smpl_size, _vorb_size, _data_size;
+    long _fmt_offset, _cue_offset, _LIST_offset, _smpl_offset, _vorb_offset, _data_offset, _junk_offset, _akd_offset;
+    long _fmt_size, _cue_size, _LIST_size, _smpl_size, _vorb_size, _data_size, _junk_size, _akd_size;
 
     // RIFF fmt
     uint16_t _channels;
