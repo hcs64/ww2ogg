@@ -7,6 +7,7 @@
   * ww2ogg support with no options (detected by vorb size)
 
 * EVE Online Apocrypha (PC)
+  * 0x2c byte vorb chunk
   * same as 0x28
 
 * The Saboteur (PC), EVE Online (PC), KOF 12 (360), Mass Effect 2 (360, PC)
