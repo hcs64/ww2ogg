@@ -11,7 +11,7 @@
 #include "stdint.h"
 #include "errors.h"
 
-#define VERSION "0.22"
+#define VERSION "0.23 beta"
 
 using namespace std;
 

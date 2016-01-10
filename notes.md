@@ -1,5 +1,9 @@
 ﻿# WWise vorbis history
 
+* ??
+  * Similar to Divinity II, but no extra bytes in fmt chunk for channel
+    mapping
+
 * Divinity II (PC)
   * 0x28 byte vorb chunk
   * 8 byte packet headers with 32-bit packet size and 32-bit granule
@@ -32,7 +36,7 @@
   * 0x2A byte vorb chunk
   * 2 byte packet headers (16-bit packet size, no granulepos)
   * vorbis packets lack packet type and window flags
- * ww2ogg support with no options (detected by vorb size)
+  * ww2ogg support with no options (detected by vorb size)
 
 * APB (PC, only certain versions and files?)
   * 0x2A byte vorb chunk merged with 0x18 byte fmt chunk (extraction error?)

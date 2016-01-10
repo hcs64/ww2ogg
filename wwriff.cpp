@@ -217,7 +217,7 @@ Wwise_RIFF_Vorbis::Wwise_RIFF_Vorbis(const string& name, const string& codebooks
     // read fmt
     if (-1 == _vorb_offset && 0x42 != _fmt_size) throw Parse_error_str("expected 0x42 fmt if vorb missing");
 
-    if (-1 != _vorb_offset && 0x28 != _fmt_size && 0x18 != _fmt_size) throw Parse_error_str("bad fmt size");
+    if (-1 != _vorb_offset && 0x28 != _fmt_size && 0x18 != _fmt_size && 0x12 != _fmt_size) throw Parse_error_str("bad fmt size");
 
     if (-1 == _vorb_offset && 0x42 == _fmt_size)
     {
@@ -234,9 +234,13 @@ Wwise_RIFF_Vorbis::Wwise_RIFF_Vorbis(const string& name, const string& codebooks
     if (0U != _read_16(_infile)) throw Parse_error_str("expected 0 bps");
     if (_fmt_size-0x12 != _read_16(_infile)) throw Parse_error_str("bad extra fmt length");
 
-    // read extra fmt
-    _ext_unk = _read_16(_infile);
-    _subtype = _read_32(_infile);
+    if (_fmt_size-0x12 >= 2) {
+      // read extra fmt
+      _ext_unk = _read_16(_infile);
+      if (_fmt_size-0x12 >= 6) {
+        _subtype = _read_32(_infile);
+      }
+    }
 
     if (_fmt_size == 0x28)
     {
