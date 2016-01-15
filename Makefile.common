@@ -3,19 +3,22 @@ EXE_NAME=$(PROJECT_NAME)$(EXE_EXT)
 
 all: $(EXE_NAME)
 
-OBJECTS=ww2ogg.o wwriff.o codebook.o crc.o
+OBJECTS=src/ww2ogg.o src/wwriff.o src/codebook.o src/crc.o
+
+BIT_STREAM_HEADERS=src/Bit_stream.h src/crc.h src/errors.h
+WWRIFF_HEADERS=src/wwriff.h $(BIT_STREAM_HEADERS)
 
 $(EXE_NAME): $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $^ -o $@
 	$(STRIP) $@
 
-ww2ogg.o: ww2ogg.cpp wwriff.h Bit_stream.h crc.h errors.h
+src/ww2ogg.o: src/ww2ogg.cpp $(WWRIFF_HEADERS)
 
-wwriff.o: wwriff.cpp wwriff.h codebook.h Bit_stream.h crc.h errors.h
+src/wwriff.o: src/wwriff.cpp $(WWRIFF_HEADERS)
 
-codebook.o: codebook.cpp codebook.h Bit_stream.h crc.h errors.h
+src/codebook.o: src/codebook.cpp src/codebook.h $(BIT_STREAM_HEADERS)
 
-crc.o: crc.c crc.h
+src/crc.o: src/crc.c src/crc.h
 
 clean:
 	rm -f $(EXE_NAME) $(OBJECTS)
