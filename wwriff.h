@@ -11,9 +11,16 @@
 #include "stdint.h"
 #include "errors.h"
 
-#define VERSION "0.23"
+#define VERSION "0.24"
 
 using namespace std;
+
+enum ForcePacketFormat {
+    kNoForcePacketFormat,
+    kForceModPackets,
+    kForceNoModPackets
+};
+
 
 class Wwise_RIFF_Vorbis
 {
@@ -58,7 +65,13 @@ class Wwise_RIFF_Vorbis
     uint16_t (*_read_16)(std::istream &is);
     uint32_t (*_read_32)(std::istream &is);
 public:
-    Wwise_RIFF_Vorbis(const string& name, const string& _codebooks_name, bool inline_codebooks, bool full_setup);
+    Wwise_RIFF_Vorbis(
+      const string& name,
+      const string& _codebooks_name,
+      bool inline_codebooks,
+      bool full_setup,
+      ForcePacketFormat force_packet_format
+      );
 
     void print_info(void);
 

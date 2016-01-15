@@ -63,3 +63,5 @@
 2014-10-14 - 0.22 - I give up, ignore unknown chunks
 
 2016-01-10 - 0.23 - support 0 extra fmt bytes
+
+2016-01-15 - 0.24 - add switch to force standard or modified packets

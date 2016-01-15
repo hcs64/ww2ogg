@@ -9,7 +9,7 @@
 
 using namespace std;
 
-/* Modern 6 byte header */
+/* Modern 2 or 6 byte header */
 class Packet
 {
     long _offset;
@@ -99,20 +99,55 @@ public:
 
 const char Vorbis_packet_header::vorbis_str[6] = {'v','o','r','b','i','s'};
 
-Wwise_RIFF_Vorbis::Wwise_RIFF_Vorbis(const string& name, const string& codebooks_name, bool inline_codebooks, bool full_setup) :
+Wwise_RIFF_Vorbis::Wwise_RIFF_Vorbis(
+    const string& name,
+    const string& codebooks_name,
+    bool inline_codebooks,
+    bool full_setup,
+    ForcePacketFormat force_packet_format
+    )
+  :
     _file_name(name),
     _codebooks_name(codebooks_name),
-    _infile(name.c_str(), ios::binary), _file_size(-1), _little_endian(true), _riff_size(-1),
-    _fmt_offset(-1), _cue_offset(-1), _LIST_offset(-1), _smpl_offset(-1), _vorb_offset(-1), _data_offset(-1),
-    _fmt_size(-1), _cue_size(-1), _LIST_size(-1), _smpl_size(-1), _vorb_size(-1), _data_size(-1),
-    _channels(0), _sample_rate(0), _avg_bytes_per_second(0), _ext_unk(0), _subtype(0),
-    _cue_count(0), _loop_count(0), _loop_start(0), _loop_end(0),
-    _sample_count(0), _setup_packet_offset(0), _first_audio_packet_offset(0),
-    _uid(0), _blocksize_0_pow(0), _blocksize_1_pow(0),
-    _inline_codebooks(inline_codebooks), _full_setup(full_setup),
-    _header_triad_present(false), _old_packet_headers(false),
-    _no_granule(false), _mod_packets(false),
-    _read_16(NULL), _read_32(NULL)
+    _infile(name.c_str(), ios::binary),
+    _file_size(-1),
+    _little_endian(true),
+    _riff_size(-1),
+    _fmt_offset(-1),
+    _cue_offset(-1),
+    _LIST_offset(-1),
+    _smpl_offset(-1),
+    _vorb_offset(-1),
+    _data_offset(-1),
+    _fmt_size(-1),
+    _cue_size(-1),
+    _LIST_size(-1),
+    _smpl_size(-1),
+    _vorb_size(-1),
+    _data_size(-1),
+    _channels(0),
+    _sample_rate(0),
+    _avg_bytes_per_second(0),
+    _ext_unk(0),
+    _subtype(0),
+    _cue_count(0),
+    _loop_count(0),
+    _loop_start(0),
+    _loop_end(0),
+    _sample_count(0),
+    _setup_packet_offset(0),
+    _first_audio_packet_offset(0),
+    _uid(0),
+    _blocksize_0_pow(0),
+    _blocksize_1_pow(0),
+    _inline_codebooks(inline_codebooks),
+    _full_setup(full_setup),
+    _header_triad_present(false),
+    _old_packet_headers(false),
+    _no_granule(false),
+    _mod_packets(false),
+    _read_16(NULL),
+    _read_32(NULL)
 {
     if (!_infile) throw File_open_error(name);
 
@@ -316,9 +351,20 @@ Wwise_RIFF_Vorbis::Wwise_RIFF_Vorbis(const string& name, const string& codebooks
             _infile.seekg(_vorb_offset + 0x4, ios::beg);
             uint32_t mod_signal = _read_32(_infile);
 
+            // set
+            // D9     11011001
+            // CB     11001011
+            // BC     10111100
+            // B2     10110010
+            // unset
+            // 4A     01001010
+            // 4B     01001011
+            // 69     01101001
+            // 70     01110000
+            // A7     10100111 !!!
+
             // seems to be 0xD9 when _mod_packets should be set
             // also seen 0xCB, 0xBC, 0xB2
-            // possible signal bits are 10000000 high, 01000000 low
             if (0x4A != mod_signal && 0x4B != mod_signal && 0x69 != mod_signal && 0x70 != mod_signal)
             {
                 _mod_packets = true;
@@ -330,6 +376,15 @@ Wwise_RIFF_Vorbis::Wwise_RIFF_Vorbis(const string& name, const string& codebooks
         default:
             _infile.seekg(_vorb_offset + 0x18, ios::beg);
             break;
+    }
+
+    if (force_packet_format == kForceNoModPackets)
+    {
+        _mod_packets = false;
+    }
+    else if (force_packet_format == kForceModPackets)
+    {
+        _mod_packets = true;
     }
 
     _setup_packet_offset = _read_32(_infile);
@@ -426,7 +481,7 @@ void Wwise_RIFF_Vorbis::print_info(void)
     }
     else if (_no_granule)
     {
-        cout << "- 6 byte packet headers, no granule" << endl;
+        cout << "- 2 byte packet headers, no granule" << endl;
     }
     else
     {
@@ -453,12 +508,12 @@ void Wwise_RIFF_Vorbis::print_info(void)
     }
     else
     {
-        cout << "- external codebooks" << endl;
+        cout << "- external codebooks (" << _codebooks_name << ")" << endl;
     }
 
     if (_mod_packets)
     {
-        cout << "- shortened Vorbis packets" << endl;
+        cout << "- modified Vorbis packets" << endl;
     }
     else
     {

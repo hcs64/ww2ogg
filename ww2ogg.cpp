@@ -13,21 +13,31 @@ class ww2ogg_options
     string in_filename;
     string out_filename;
     string codebooks_filename;
-    bool inline_codebooks, full_setup;
+    bool inline_codebooks;
+    bool full_setup;
+    ForcePacketFormat force_packet_format;
 public:
-    ww2ogg_options(void) : in_filename(""), out_filename(""), codebooks_filename("packed_codebooks.bin"), inline_codebooks(false), full_setup(false) {}
+    ww2ogg_options(void) : in_filename(""),
+                           out_filename(""),
+                           codebooks_filename("packed_codebooks.bin"),
+                           inline_codebooks(false),
+                           full_setup(false),
+                           force_packet_format(kNoForcePacketFormat)
+      {}
     void parse_args(int argc, char **argv);
     const string& get_in_filename(void) const {return in_filename;}
     const string& get_out_filename(void) const {return out_filename;}
     const string& get_codebooks_filename(void) const {return codebooks_filename;}
     bool get_inline_codebooks(void) const {return inline_codebooks;}
     bool get_full_setup(void) const {return full_setup;}
+    ForcePacketFormat get_force_packet_format(void) const {return force_packet_format;}
 };
 
 void usage(void)
 {
     cout << endl;
     cout << "usage: ww2ogg input.wav [-o output.ogg] [--inline-codebooks] [--full-setup]" << endl <<
+            "                        [--mod-packets | --no-mod-packets]" << endl <<
             "                        [--pcb packed_codebooks.bin]" << endl << endl;
 }
 
@@ -55,7 +65,9 @@ int main(int argc, char **argv)
         Wwise_RIFF_Vorbis ww(opt.get_in_filename(),
                 opt.get_codebooks_filename(),
                 opt.get_inline_codebooks(),
-                opt.get_full_setup());
+                opt.get_full_setup(),
+                opt.get_force_packet_format()
+                );
 
         ww.print_info();
         cout << "Output: " << opt.get_out_filename() << endl;
@@ -111,6 +123,22 @@ void ww2ogg_options::parse_args(int argc, char ** argv)
             // early version with setup almost entirely intact
             full_setup = true;
             inline_codebooks = true;
+        }
+        else if (!strcmp(argv[i], "--mod-packets") || !strcmp(argv[i], "--no-mod-packets"))
+        {
+            if (force_packet_format != kNoForcePacketFormat)
+            {
+                throw Argument_error("only one of --mod-packets or --no-mod-packets is allowed");
+            }
+
+            if (!strcmp(argv[i], "--mod-packets"))
+            {
+              force_packet_format = kForceModPackets;
+            }
+            else
+            {
+              force_packet_format = kForceNoModPackets;
+            }
         }
         else if (!strcmp(argv[i], "--pcb"))
         {
