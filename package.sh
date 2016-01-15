@@ -19,5 +19,5 @@ zip "ww2ogg$ZIPNAME.zip" \
   packed_codebooks.bin \
   packed_codebooks_aoTuV_603.bin \
   package.sh \
-  README \
+  README.md \
   ww2ogg.exe
