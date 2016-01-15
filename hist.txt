@@ -61,3 +61,5 @@
 2013-12-10 - 0.21 - support 0x2c vorb chunk, same as 0x28
 
 2014-10-14 - 0.22 - I give up, ignore unknown chunks
+
+2016-01-10 - 0.23 - support 0 extra fmt bytes

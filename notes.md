@@ -1,7 +1,7 @@
 ﻿# WWise vorbis history
 
-* ??
-  * Similar to Divinity II, but no extra bytes in fmt chunk for channel
+* KetnetKick 2
+  * Similar to Divinity II, but 0 extra bytes in fmt chunk for channel
     mapping
 
 * Divinity II (PC)
