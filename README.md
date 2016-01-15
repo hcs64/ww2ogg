@@ -50,5 +50,7 @@ Note:
 
 It is a good idea to run the output through revorb to get smaller,
 cleaner files than ww2ogg generates currently.
+
 http://www.hydrogenaudio.org/forums/lofiversion/index.php/t64328.html
+
 https://ipfs.io/ipfs/QmVgjfU7qgPEtANatrfh7VQJby9t1ojrTbN7X8Ei4djF4e/revorb.exe
