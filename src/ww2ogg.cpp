@@ -5,6 +5,9 @@
 #include "wwriff.h"
 #include "stdint.h"
 #include "errors.h"
+#ifdef __MINGW32__
+#include <fcntl.h>
+#endif
 
 using namespace std;
 
@@ -16,13 +19,15 @@ class ww2ogg_options
     bool inline_codebooks;
     bool full_setup;
     ForcePacketFormat force_packet_format;
+    bool to_stdout;
 public:
     ww2ogg_options(void) : in_filename(""),
                            out_filename(""),
                            codebooks_filename("packed_codebooks.bin"),
                            inline_codebooks(false),
                            full_setup(false),
-                           force_packet_format(kNoForcePacketFormat)
+                           force_packet_format(kNoForcePacketFormat),
+                           to_stdout(false)
       {}
     void parse_args(int argc, char **argv);
     const string& get_in_filename(void) const {return in_filename;}
@@ -31,19 +36,20 @@ public:
     bool get_inline_codebooks(void) const {return inline_codebooks;}
     bool get_full_setup(void) const {return full_setup;}
     ForcePacketFormat get_force_packet_format(void) const {return force_packet_format;}
+    bool get_to_stdout(void) const {return to_stdout;}
 };
 
 void usage(void)
 {
-    cout << endl;
-    cout << "usage: ww2ogg input.wav [-o output.ogg] [--inline-codebooks] [--full-setup]" << endl <<
+    cerr << endl;
+    cerr << "usage: ww2ogg input.wav [-o output.ogg] [--inline-codebooks] [--full-setup]" << endl <<
             "                        [--mod-packets | --no-mod-packets]" << endl <<
-            "                        [--pcb packed_codebooks.bin]" << endl << endl;
+            "                        [--pcb packed_codebooks.bin] [--stdout]" << endl << endl;
 }
 
 int main(int argc, char **argv)
 {
-    cout << "Audiokinetic Wwise RIFF/RIFX Vorbis to Ogg Vorbis converter " VERSION " by hcs" << endl << endl;
+    cerr << "Audiokinetic Wwise RIFF/RIFX Vorbis to Ogg Vorbis converter " VERSION " by hcs" << endl << endl;
 
     ww2ogg_options opt;
 
@@ -53,7 +59,7 @@ int main(int argc, char **argv)
     }
     catch (const Argument_error& ae)
     {
-        cout << ae << endl;
+        cerr << ae << endl;
 
         usage();
         return 1;
@@ -61,7 +67,7 @@ int main(int argc, char **argv)
 
     try
     {
-        cout << "Input: " << opt.get_in_filename() << endl;
+        cerr << "Input: " << opt.get_in_filename() << endl;
         Wwise_RIFF_Vorbis ww(opt.get_in_filename(),
                 opt.get_codebooks_filename(),
                 opt.get_inline_codebooks(),
@@ -70,22 +76,32 @@ int main(int argc, char **argv)
                 );
 
         ww.print_info();
-        cout << "Output: " << opt.get_out_filename() << endl;
 
-        ofstream of(opt.get_out_filename().c_str(), ios::binary);
-        if (!of) throw File_open_error(opt.get_out_filename());
-
-        ww.generate_ogg(of);
-        cout << "Done!" << endl << endl;
+        if (!opt.get_to_stdout())
+        {
+            cerr << "Output: " << opt.get_out_filename() << endl;
+            ofstream of(opt.get_out_filename().c_str(), ios::binary);
+            if (!of) throw File_open_error(opt.get_out_filename());
+            ww.generate_ogg(of);
+        }
+        else
+        {
+#ifdef __MINGW32__
+            _setmode( _fileno( stdout ),  _O_BINARY );
+#endif
+            ww.generate_ogg(cout);
+        }
+        cerr << "Output: stdout" << endl;
+        cerr << "Done!" << endl << endl;
     }
     catch (const File_open_error& fe)
     {
-        cout << fe << endl;
+        cerr << fe << endl;
         return 1;
     }
     catch (const Parse_error& pe)
     {
-        cout << pe << endl;
+        cerr << pe << endl;
         return 1;
     }
 
@@ -149,6 +165,11 @@ void ww2ogg_options::parse_args(int argc, char ** argv)
             }
 
             codebooks_filename = argv[++i];
+        }
+        else if (!strcmp(argv[i], "--stdout"))
+        {
+            // write to stdout
+            to_stdout = true;
         }
         else
         {
