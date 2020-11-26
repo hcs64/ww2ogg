@@ -459,73 +459,73 @@ void Wwise_RIFF_Vorbis::print_info(void)
 {
     if (_little_endian)
     {
-        cout << "RIFF WAVE";
+        cerr << "RIFF WAVE";
     }
     else
     {
-        cout << "RIFX WAVE";
+        cerr << "RIFX WAVE";
     }
-    cout << " " << _channels << " channel";
-    if (_channels != 1) cout << "s";
-    cout << " " << _sample_rate << " Hz " << _avg_bytes_per_second*8 << " bps" << endl;
-    cout << _sample_count << " samples" << endl;
+    cerr << " " << _channels << " channel";
+    if (_channels != 1) cerr << "s";
+    cerr << " " << _sample_rate << " Hz " << _avg_bytes_per_second*8 << " bps" << endl;
+    cerr << _sample_count << " samples" << endl;
 
     if (0 != _loop_count)
     {
-        cout << "loop from " << _loop_start << " to " << _loop_end << endl;
+        cerr << "loop from " << _loop_start << " to " << _loop_end << endl;
     }
 
     if (_old_packet_headers)
     {
-        cout << "- 8 byte (old) packet headers" << endl;
+        cerr << "- 8 byte (old) packet headers" << endl;
     }
     else if (_no_granule)
     {
-        cout << "- 2 byte packet headers, no granule" << endl;
+        cerr << "- 2 byte packet headers, no granule" << endl;
     }
     else
     {
-        cout << "- 6 byte packet headers" << endl;
+        cerr << "- 6 byte packet headers" << endl;
     }
 
     if (_header_triad_present)
     {
-        cout << "- Vorbis header triad present" << endl;
+        cerr << "- Vorbis header triad present" << endl;
     }
 
     if (_full_setup || _header_triad_present)
     {
-        cout << "- full setup header" << endl;
+        cerr << "- full setup header" << endl;
     }
     else
     {
-        cout << "- stripped setup header" << endl;
+        cerr << "- stripped setup header" << endl;
     }
 
     if (_inline_codebooks || _header_triad_present)
     {
-        cout << "- inline codebooks" << endl;
+        cerr << "- inline codebooks" << endl;
     }
     else
     {
-        cout << "- external codebooks (" << _codebooks_name << ")" << endl;
+        cerr << "- external codebooks (" << _codebooks_name << ")" << endl;
     }
 
     if (_mod_packets)
     {
-        cout << "- modified Vorbis packets" << endl;
+        cerr << "- modified Vorbis packets" << endl;
     }
     else
     {
-        cout << "- standard Vorbis packets" << endl;
+        cerr << "- standard Vorbis packets" << endl;
     }
 
 #if 0
     if (0 != _cue_count)
     {
-        cout << _cue_count << " cue point";
-        if (_cue_count != 1) cout << "s";
-        cout << endl;
+        cerr << _cue_count << " cue point";
+        if (_cue_count != 1) cerr << "s";
+        cerr << endl;
     }
 #endif
 }
@@ -646,7 +646,7 @@ void Wwise_RIFF_Vorbis::generate_ogg_header(Bit_oggstream& os, bool * & mode_blo
         unsigned int codebook_count = codebook_count_less1 + 1;
         os << codebook_count_less1;
 
-        //cout << codebook_count << " codebooks" << endl;
+        //cerr << codebook_count << " codebooks" << endl;
 
         // rebuild codebooks
         if (_inline_codebooks)
@@ -675,7 +675,7 @@ void Wwise_RIFF_Vorbis::generate_ogg_header(Bit_oggstream& os, bool * & mode_blo
             {
                 Bit_uint<10> codebook_id;
                 ss >> codebook_id;
-                //cout << "Codebook " << i << " = " << codebook_id << endl;
+                //cerr << "Codebook " << i << " = " << codebook_id << endl;
                 try
                 {
                     cbl.rebuild(codebook_id, os);
@@ -983,7 +983,7 @@ void Wwise_RIFF_Vorbis::generate_ogg_header(Bit_oggstream& os, bool * & mode_blo
             mode_blockflag = new bool [mode_count];
             mode_bits = ilog(mode_count-1);
 
-            //cout << mode_count << " modes" << endl;
+            //cerr << mode_count << " modes" << endl;
 
             for (unsigned int i = 0; i < mode_count; i++)
             {
@@ -1017,7 +1017,7 @@ void Wwise_RIFF_Vorbis::generate_ogg_header(Bit_oggstream& os, bool * & mode_blo
     }
 }
 
-void Wwise_RIFF_Vorbis::generate_ogg(ofstream& of)
+void Wwise_RIFF_Vorbis::generate_ogg(ostream& of)
 {
     Bit_oggstream os(of);
 

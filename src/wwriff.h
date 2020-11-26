@@ -75,7 +75,7 @@ public:
 
     void print_info(void);
 
-    void generate_ogg(ofstream& of);
+    void generate_ogg(ostream& of);
     void generate_ogg_header(Bit_oggstream& os, bool * & mode_blockflag, int & mode_bits);
     void generate_ogg_header_with_triad(Bit_oggstream& os);
 };
