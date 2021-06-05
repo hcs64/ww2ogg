@@ -10,6 +10,9 @@
 #define _isatty isatty
 #define _fileno fileno
 #endif
+#ifdef __MINGW32__
+#define <fcntl.h>
+#endif
 
 using namespace std;
 
