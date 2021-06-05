@@ -1017,7 +1017,7 @@ void Wwise_RIFF_Vorbis::generate_ogg_header(Bit_oggstream& os, bool * & mode_blo
     }
 }
 
-void Wwise_RIFF_Vorbis::generate_ogg(ofstream& of)
+void Wwise_RIFF_Vorbis::generate_ogg(ostream& of)
 {
     Bit_oggstream os(of);
 

@@ -5,6 +5,14 @@
 #include "wwriff.h"
 #include "stdint.h"
 #include "errors.h"
+#ifdef __unix__
+#include <unistd.h>
+#define _isatty isatty
+#define _fileno fileno
+#endif
+#ifdef __MINGW32__
+#define <fcntl.h>
+#endif
 
 using namespace std;
 
@@ -16,13 +24,17 @@ class ww2ogg_options
     bool inline_codebooks;
     bool full_setup;
     ForcePacketFormat force_packet_format;
+    bool quiet;
+    bool to_stdout;
 public:
     ww2ogg_options(void) : in_filename(""),
                            out_filename(""),
                            codebooks_filename("packed_codebooks.bin"),
                            inline_codebooks(false),
                            full_setup(false),
-                           force_packet_format(kNoForcePacketFormat)
+                           force_packet_format(kNoForcePacketFormat),
+                           quiet(false),
+                           to_stdout(false)
       {}
     void parse_args(int argc, char **argv);
     const string& get_in_filename(void) const {return in_filename;}
@@ -31,19 +43,29 @@ public:
     bool get_inline_codebooks(void) const {return inline_codebooks;}
     bool get_full_setup(void) const {return full_setup;}
     ForcePacketFormat get_force_packet_format(void) const {return force_packet_format;}
+    bool get_quiet(void) const {return quiet;}
+    bool get_to_stdout(void) const {return to_stdout;}
 };
+
+void header(void)
+{
+    cout << "Audiokinetic Wwise RIFF/RIFX Vorbis to Ogg Vorbis converter " VERSION " by hcs" << endl << endl;
+}
 
 void usage(void)
 {
     cout << endl;
+    header();
     cout << "usage: ww2ogg input.wav [-o output.ogg] [--inline-codebooks] [--full-setup]" << endl <<
             "                        [--mod-packets | --no-mod-packets]" << endl <<
-            "                        [--pcb packed_codebooks.bin]" << endl << endl;
+            "                        [--pcb packed_codebooks.bin] [--quiet]" << endl <<
+            endl <<
+            "Use \"-o -\" to send the ogg file to stdout.  This will also" << endl <<
+            "imply \"--quiet\"." << endl << endl;
 }
 
 int main(int argc, char **argv)
 {
-    cout << "Audiokinetic Wwise RIFF/RIFX Vorbis to Ogg Vorbis converter " VERSION " by hcs" << endl << endl;
 
     ww2ogg_options opt;
 
@@ -53,15 +75,23 @@ int main(int argc, char **argv)
     }
     catch (const Argument_error& ae)
     {
-        cout << ae << endl;
+        cerr << ae << endl;
 
         usage();
         return 1;
     }
 
+    if (!opt.get_quiet())
+    {
+        header();
+    }
+
     try
     {
-        cout << "Input: " << opt.get_in_filename() << endl;
+        if (!opt.get_quiet())
+        {
+            cout << "Input: " << opt.get_in_filename() << endl;
+        }
         Wwise_RIFF_Vorbis ww(opt.get_in_filename(),
                 opt.get_codebooks_filename(),
                 opt.get_inline_codebooks(),
@@ -69,23 +99,42 @@ int main(int argc, char **argv)
                 opt.get_force_packet_format()
                 );
 
-        ww.print_info();
-        cout << "Output: " << opt.get_out_filename() << endl;
+        if (!opt.get_quiet())
+        {
+            ww.print_info();
+        }
 
-        ofstream of(opt.get_out_filename().c_str(), ios::binary);
-        if (!of) throw File_open_error(opt.get_out_filename());
+        if (opt.get_to_stdout())
+        {
+#if defined(_WIN32) || defined(_WIN64) || defined(__MINGW32__)
+            _setmode(_fileno(stdout),  _O_BINARY);
+#endif
+            ww.generate_ogg(cout);
+        }
+        else
+        {
+            if (!opt.get_quiet())
+            {
+                cout << "Output: " << opt.get_out_filename() << endl;
+            }
+            ofstream of(opt.get_out_filename().c_str(), ios::binary);
+            if (!of) throw File_open_error(opt.get_out_filename());
+            ww.generate_ogg(of);
+        }
 
-        ww.generate_ogg(of);
-        cout << "Done!" << endl << endl;
+        if (!opt.get_quiet())
+        {
+            cout << "Done!" << endl << endl;
+        }
     }
     catch (const File_open_error& fe)
     {
-        cout << fe << endl;
+        cerr << fe << endl;
         return 1;
     }
     catch (const Parse_error& pe)
     {
-        cout << pe << endl;
+        cerr << pe << endl;
         return 1;
     }
 
@@ -105,12 +154,21 @@ void ww2ogg_options::parse_args(int argc, char ** argv)
                 throw Argument_error("-o needs an option");
             }
 
-            if (set_output)
+            if (set_output or to_stdout)
             {
                 throw Argument_error("only one output file at a time");
             }
 
             out_filename = argv[++i];
+            if (out_filename == "-")
+            {
+                if (_isatty(_fileno(stdout)))
+                {
+                    throw Argument_error("STDOUT output is not supported when on a TTY");
+                }
+                to_stdout = true;
+                quiet = true;
+            }
             set_output = true;
         }
         else if (!strcmp(argv[i], "--inline-codebooks"))
@@ -149,6 +207,12 @@ void ww2ogg_options::parse_args(int argc, char ** argv)
             }
 
             codebooks_filename = argv[++i];
+        }
+        else if (!strcmp(argv[i], "--quiet"))
+        {
+            // don't output any status messages to stdout (will be
+            // forced active if our output is stdout)
+            quiet = true;
         }
         else
         {
