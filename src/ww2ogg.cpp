@@ -106,7 +106,7 @@ int main(int argc, char **argv)
 
         if (opt.get_to_stdout())
         {
-#if defined(_WIN32) || defined(_WIN64)
+#if defined(_WIN32) || defined(_WIN64) || defined(__MINGW32__)
             _setmode(_fileno(stdout),  _O_BINARY);
 #endif
             ww.generate_ogg(cout);
