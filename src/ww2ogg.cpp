@@ -75,7 +75,7 @@ int main(int argc, char **argv)
     }
     catch (const Argument_error& ae)
     {
-        cout << ae << endl;
+        cerr << ae << endl;
 
         usage();
         return 1;
