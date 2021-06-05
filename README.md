@@ -15,6 +15,11 @@ You can also specify an output file with `-o`, as in
 
 `ww2ogg input.ogg -o output.ogg`
 
+To output the file to stdout (such as to pipe it to revorb or other
+audio-processing utilities), use `-o -`, as in
+
+`ww2ogg input.ogg -o - | revorb - output.ogg`
+
 
 Troubleshooting
 --------------------------------------------------------------------------------

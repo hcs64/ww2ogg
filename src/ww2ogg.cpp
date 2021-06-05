@@ -51,11 +51,14 @@ void header(void)
 
 void usage(void)
 {
-    header();
     cout << endl;
+    header();
     cout << "usage: ww2ogg input.wav [-o output.ogg] [--inline-codebooks] [--full-setup]" << endl <<
             "                        [--mod-packets | --no-mod-packets]" << endl <<
-            "                        [--pcb packed_codebooks.bin] [--quiet]" << endl << endl;
+            "                        [--pcb packed_codebooks.bin] [--quiet]" << endl <<
+            endl <<
+            "Use \"-o -\" to send the ogg file to stdout.  This will also" << endl <<
+            "imply \"--quiet\"." << endl << endl;
 }
 
 int main(int argc, char **argv)
