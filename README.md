@@ -54,3 +54,5 @@ cleaner files than ww2ogg generates currently.
 https://hydrogenaud.io/index.php/topic,64328.0.html
 
 https://cloudflare-ipfs.com/ipfs/QmVgjfU7qgPEtANatrfh7VQJby9t1ojrTbN7X8Ei4djF4e/revorb.exe
+
+https://github.com/april/revorb (revorb written to work on platforms such as Linux and macOS)
