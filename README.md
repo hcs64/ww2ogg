@@ -3,6 +3,21 @@ ww2ogg
 
 Audiokinetic Wwise RIFF/RIFX Vorbis to Ogg Vorbis converter by hcs
 
+NOTE: Prefer vgmstream
+----
+
+If you don't need Ogg Vorbis output and just want to play the audio,
+I recommend using [vgmstream](https://vgmstream.org/) instead of ww2ogg.
+It has extensive support for playing Wwise files directly. Improved
+features include:
+
+- decoders for Opus and many proprietary game console codecs
+- looping
+- improved .wem metadata parsing
+- .bnk support
+- TXTP playlists to control complex playback with multi-segment streams
+  - these can be generated with [wwiser](https://github.com/bnnm/wwiser)
+
 Usage
 ----
 Standard usage is just
@@ -52,5 +67,3 @@ It is a good idea to run the output through revorb to get smaller,
 cleaner files than ww2ogg generates currently.
 
 https://hydrogenaud.io/index.php/topic,64328.0.html
-
-https://cloudflare-ipfs.com/ipfs/QmVgjfU7qgPEtANatrfh7VQJby9t1ojrTbN7X8Ei4djF4e/revorb.exe
